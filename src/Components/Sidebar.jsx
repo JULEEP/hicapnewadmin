@@ -120,6 +120,14 @@ const Sidebar = ({ isCollapsed, isMobile }) => {
         { name: "Get All Interviews", path: "/interviewlist" },
       ],
     },
+   {
+      icon: <i className="ri-file-text-fill text-white"></i>, // Using a file/invoice icon
+  name: "Certificates",
+  dropdown: [
+    { name: "Issue Certificate", path: "/add-certificate" }, // Path to the page where certificates can be issued
+    { name: "View Certificates", path: "/certificate-list" }, // Path to view the list of issued certificates
+  ],
+},
     {
       icon: <i className="ri-money-dollar-box-fill text-white"></i>,
       name: "Payments",

@@ -1195,71 +1195,74 @@ const FormsManagement = () => {
                   : 'text-gray-600 hover:text-gray-800'
                 }`}
             >
-              WhatsApp Users ({users.length})
+              Certificate Users ({users.length})
             </button>
           </div>
 
           <div className="p-4 border-b bg-gray-50">
             <div className="flex flex-wrap gap-4 items-center justify-between">
-              <div className="flex flex-wrap gap-3 items-center">
-                <button
-                  onClick={handleCreate}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2 flex-shrink-0"
-                >
-                  <Plus size={18} />
-                  Create New
-                </button>
+    <div className="flex gap-3 items-center flex-wrap">
+  <button
+    onClick={handleCreate}
+    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2 flex-shrink-0"
+  >
+    <Plus size={18} />
+    Create New
+  </button>
 
-                <div className="relative flex-1 min-w-[200px]">
-                  <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
-                  <input
-                    type="text"
-                    placeholder="Search..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 pr-4 py-2 w-full border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
+  <div className="relative flex-1 min-w-[200px]">
+    <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
+    <input
+      type="text"
+      placeholder="Search..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      className="pl-10 pr-4 py-2 w-full border rounded-lg focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
 
-                <select
-                  value={filterField}
-                  onChange={(e) => setFilterField(e.target.value)}
-                  className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 min-w-[150px]"
-                >
-                  <option value="all">All Fields</option>
-                  {activeTab === 'enquiry' && <option value="city">By City</option>}
-                  {activeTab === 'contact' && <option value="enquiryType">By Type</option>}
-                  {activeTab === 'apply' && <option value="experties">By Expertise</option>}
-                  {activeTab === 'demo' && <option value="course">By Course</option>}
-                  {activeTab === 'getintouch' && <option value="iAm">By Type</option>}
-                  {activeTab === 'users' && <option value="syllabus">By Syllabus</option>}
-                </select>
+  <select
+    value={filterField}
+    onChange={(e) => setFilterField(e.target.value)}
+    className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 min-w-[150px] flex-shrink-0"
+  >
+    <option value="all">All Fields</option>
+    {activeTab === 'enquiry' && <option value="city">By City</option>}
+    {activeTab === 'contact' && <option value="enquiryType">By Type</option>}
+    {activeTab === 'apply' && <option value="experties">By Expertise</option>}
+    {activeTab === 'demo' && <option value="course">By Course</option>}
+    {activeTab === 'getintouch' && <option value="iAm">By Type</option>}
+    {activeTab === 'users' && <option value="syllabus">By Syllabus</option>}
+  </select>
 
-                <div className="flex flex-col min-w-[150px]">
-                  <label htmlFor="dateFrom" className="text-sm text-gray-600 mb-1">
-                    From Date
-                  </label>
-                  <input
-                    id="dateFrom"
-                    type="date"
-                    value={dateFrom}
-                    onChange={(e) => setDateFrom(e.target.value)}
-                    className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
+  <div className="flex gap-3 items-center mb-4">
+    <div className="flex flex-col min-w-[150px]">
+      <label htmlFor="dateFrom" className="text-sm text-gray-600 mb-1">
+        From Date
+      </label>
+      <input
+        id="dateFrom"
+        type="date"
+        value={dateFrom}
+        onChange={(e) => setDateFrom(e.target.value)}
+        className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
 
-                <div className="flex flex-col min-w-[150px]">
-                  <label htmlFor="dateTo" className="text-sm text-gray-600 mb-1">
-                    To Date
-                  </label>
-                  <input
-                    id="dateTo"
-                    type="date"
-                    value={dateTo}
-                    onChange={(e) => setDateTo(e.target.value)}
-                    className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
+    <div className="flex flex-col min-w-[150px]">
+      <label htmlFor="dateTo" className="text-sm text-gray-600 mb-1">
+        To Date
+      </label>
+      <input
+        id="dateTo"
+        type="date"
+        value={dateTo}
+        onChange={(e) => setDateTo(e.target.value)}
+        className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+  </div>
+
 
                 <button
                   onClick={clearFilters}

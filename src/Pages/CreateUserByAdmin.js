@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from "react-router-dom"; // import navigate
+import { useNavigate } from "react-router-dom";
 
 const API_BASE = 'https://api.techsterker.com/api';
 
@@ -24,8 +24,9 @@ const CreateUserByAdmin = () => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [invoiceData, setInvoiceData] = useState(null);
+  const [selectedCourse, setSelectedCourse] = useState(null);
 
-    const navigate = useNavigate(); // hook initialize
+  const navigate = useNavigate();
 
   // Fetch all courses on component mount
   useEffect(() => {
@@ -46,12 +47,13 @@ const CreateUserByAdmin = () => {
   // Handle course selection change
   const handleCourseChange = (e) => {
     const courseId = e.target.value;
-    const selectedCourse = courses.find(course => course._id === courseId);
+    const course = courses.find(course => course._id === courseId);
     
+    setSelectedCourse(course);
     setFormData((prevState) => ({
       ...prevState,
       courseId: courseId,
-      course: selectedCourse ? selectedCourse.name : ''
+      course: course ? course.name : ''
     }));
   };
 
@@ -64,13 +66,60 @@ const CreateUserByAdmin = () => {
     }));
   };
 
-   // Handle form submission
+  // Calculate amounts based on selected course and payment type
+  const calculateAmounts = () => {
+    if (!selectedCourse || !selectedCourse.price) {
+      return { coursePrice: 0, gstAmount: 0, totalPrice: 0, advancePayment: 0, remainingPayment: 0 };
+    }
+
+    const coursePrice = selectedCourse.price;
+    const gstAmount = (coursePrice * 18) / 100;
+    const totalPrice = coursePrice + gstAmount;
+    
+    let advancePayment = 0;
+    let remainingPayment = 0;
+
+    if (formData.isAdvancePayment) {
+      advancePayment = (totalPrice * 60) / 100; // 60% of total price
+      remainingPayment = totalPrice - advancePayment;
+    } else {
+      advancePayment = totalPrice;
+      remainingPayment = 0;
+    }
+
+    return {
+      coursePrice,
+      gstAmount,
+      totalPrice,
+      advancePayment,
+      remainingPayment
+    };
+  };
+
+  const amounts = calculateAmounts();
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     setSuccessMessage('');
     setInvoiceData(null);
+
+    // Validation
+    if (!formData.name || !formData.mobile || !formData.email || !formData.courseId || !formData.degree || !formData.department || !formData.yearOfPassedOut) {
+      setError('Please fill all required fields');
+      setLoading(false);
+      return;
+    }
+
+    // Mobile validation
+    const mobileRegex = /^[6-9]\d{9}$/;
+    if (!mobileRegex.test(formData.mobile)) {
+      setError('Please enter a valid 10-digit mobile number');
+      setLoading(false);
+      return;
+    }
 
     try {
       const res = await axios.post(`${API_BASE}/userregisterbyadmin`, formData);
@@ -94,9 +143,12 @@ const CreateUserByAdmin = () => {
           experience: '',
           isAdvancePayment: false,
         });
+        setSelectedCourse(null);
 
-        // ✅ Navigate to /users after success
-        navigate("/users"); 
+        // Navigate to /users after success
+        setTimeout(() => {
+          navigate("/users");
+        }, 3000);
       } else {
         setError(res.data.message || 'Failed to register user');
       }
@@ -156,10 +208,14 @@ const CreateUserByAdmin = () => {
             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
             maxLength="10"
+            pattern="[6-9]{1}[0-9]{9}"
           />
+          {formData.mobile && !/^[6-9]\d{9}$/.test(formData.mobile) && (
+            <p className="text-red-500 text-sm mt-1">Please enter a valid mobile number</p>
+          )}
         </div>
 
-        <div>
+        <div className="md:col-span-2">
           <label className="block text-gray-700 text-sm font-bold mb-2">Email *</label>
           <input
             type="email"
@@ -193,6 +249,40 @@ const CreateUserByAdmin = () => {
             ))}
           </select>
         </div>
+
+        {/* Amount Breakdown */}
+        {selectedCourse && (
+          <div className="md:col-span-2 mt-4 p-4 bg-blue-50 rounded-lg">
+            <h3 className="text-lg font-semibold text-blue-800 mb-3">💰 Amount Breakdown</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-gray-600">Course Price</p>
+                <p className="text-lg font-semibold">₹{amounts.coursePrice.toLocaleString()}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">GST (18%)</p>
+                <p className="text-lg font-semibold">₹{amounts.gstAmount.toLocaleString()}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Total Amount</p>
+                <p className="text-lg font-bold text-green-600">₹{amounts.totalPrice.toLocaleString()}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">
+                  {formData.isAdvancePayment ? 'Advance Payment (60%)' : 'Full Payment'}
+                </p>
+                <p className="text-lg font-bold text-blue-600">₹{amounts.advancePayment.toLocaleString()}</p>
+              </div>
+            </div>
+            {formData.isAdvancePayment && (
+              <div className="mt-3 p-3 bg-yellow-50 rounded border border-yellow-200">
+                <p className="text-sm text-yellow-800">
+                  <strong>Remaining Balance:</strong> ₹{amounts.remainingPayment.toLocaleString()}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Educational Background */}
         <div className="md:col-span-2 mt-4">
@@ -290,11 +380,13 @@ const CreateUserByAdmin = () => {
               }))}
               className="mr-2"
             />
-            <span className="text-gray-700">Advance Payment (₹15,000 + GST)</span>
+            <span className="text-gray-700">
+              Advance Payment (60% of Total Amount)
+            </span>
           </label>
           <p className="text-sm text-gray-600 mt-1">
             {formData.isAdvancePayment 
-              ? 'Student will pay ₹15,000 + GST now and remaining amount later' 
+              ? `Student will pay 60% (₹${amounts.advancePayment.toLocaleString()}) now and remaining ₹${amounts.remainingPayment.toLocaleString()} later` 
               : 'Full payment will be collected'}
           </p>
         </div>
@@ -304,9 +396,19 @@ const CreateUserByAdmin = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline disabled:opacity-50"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline disabled:opacity-50 transition duration-200"
           >
-            {loading ? 'Creating User and Generating Invoice...' : 'Create User & Generate Invoice'}
+            {loading ? (
+              <span className="flex items-center justify-center">
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Creating User and Generating Invoice...
+              </span>
+            ) : (
+              'Create User & Generate Invoice'
+            )}
           </button>
         </div>
       </form>
@@ -330,7 +432,7 @@ const CreateUserByAdmin = () => {
               <h4 className="font-semibold text-gray-700">Payment Details:</h4>
               <p><strong>Course:</strong> {invoiceData.course}</p>
               <p><strong>Course Price:</strong> ₹{invoiceData.coursePrice?.toLocaleString()}</p>
-              <p><strong>GST (5%):</strong> ₹{invoiceData.gstAmount?.toLocaleString()}</p>
+              <p><strong>GST (18%):</strong> ₹{invoiceData.gstAmount?.toLocaleString()}</p>
               <p><strong>Total Price:</strong> ₹{invoiceData.totalPrice?.toLocaleString()}</p>
               <p><strong>Advance Paid:</strong> ₹{invoiceData.advancePayment?.toLocaleString()}</p>
               <p><strong>Remaining:</strong> ₹{invoiceData.remainingPayment?.toLocaleString()}</p>
@@ -353,7 +455,7 @@ const CreateUserByAdmin = () => {
               📄 Download Invoice PDF
             </a>
             <p className="text-sm text-gray-600 mt-2">
-              Invoice has been sent to student's email and mobile. Student can pay via UPI using the invoice.
+              Welcome email with login credentials and invoice has been sent to student's email and mobile.
             </p>
           </div>
         </div>
