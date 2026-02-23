@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { FaChevronDown } from "react-icons/fa";
+import { FaChevronDown, FaChevronRight, FaSignOutAlt, FaUserCircle, FaHome, FaUsers, FaBook, FaGraduationCap, FaChalkboardTeacher, FaCalendarAlt, FaFileAlt, FaPhone, FaCertificate, FaCreditCard, FaUserTie, FaFolderOpen, FaVideo, FaClipboardList } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({ isCollapsed, isMobile }) => {
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [hoveredItem, setHoveredItem] = useState(null);
 
   const navigate = useNavigate();
 
@@ -15,192 +16,399 @@ const Sidebar = ({ isCollapsed, isMobile }) => {
 
   const handleLogout = () => {
     const confirmLogout = window.confirm("Are you sure you want to logout?");
-
+    
     if (confirmLogout) {
-      // Clear all authentication related data
       localStorage.removeItem("authToken");
       localStorage.removeItem("userData");
       localStorage.removeItem("adminToken");
       sessionStorage.removeItem("authToken");
-
-      // Clear any axios default headers if set
+      
       delete axios.defaults.headers.common['Authorization'];
-
-      // Navigate to home page
+      
       navigate("/", { replace: true });
-
-      // Optional: Force reload to reset application state
       window.location.reload();
+    }
+  };
+
+  const getIconForItem = (name) => {
+    switch(name) {
+      case "Dashboard": return <FaHome className="text-lg" />;
+      case "Users": return <FaUsers className="text-lg" />;
+      case "Attendance": return <FaClipboardList className="text-lg" />;
+      case "Courses": return <FaBook className="text-lg" />;
+      case "Course Module": return <FaFolderOpen className="text-lg" />;
+      case "Enrollments": return <FaGraduationCap className="text-lg" />;
+      case "Mentors": return <FaUserTie className="text-lg" />;
+      case "Invoices": return <FaFileAlt className="text-lg" />;
+      case "Contacts": return <FaPhone className="text-lg" />;
+      case "Classes": return <FaVideo className="text-lg" />;
+      case "Interviews": return <FaCalendarAlt className="text-lg" />;
+      case "Certificates": return <FaCertificate className="text-lg" />;
+      case "Payments": return <FaCreditCard className="text-lg" />;
+      case "Logout": return <FaSignOutAlt className="text-lg" />;
+      default: return <FaHome className="text-lg" />;
     }
   };
 
   const elements = [
     {
-      icon: <i className="ri-dashboard-fill text-white"></i>,
+      icon: getIconForItem("Dashboard"),
       name: "Dashboard",
       path: "/dashboard",
+      gradient: "from-blue-600 to-cyan-500",
     },
     {
-      icon: <i className="ri-user-fill text-white"></i>,
+      icon: getIconForItem("Users"),
       name: "Users",
+      gradient: "from-purple-600 to-indigo-500",
       dropdown: [
-        { name: "Get All Users", path: "/users" },
-        { name: "Create User", path: "/createuser" },
+        { name: "Get All Users", path: "/users", icon: <FaChevronRight className="text-xs" /> },
+        { name: "Create User", path: "/createuser", icon: <FaChevronRight className="text-xs" /> },
       ],
     },
     {
-      icon: <i className="ri-book-open-fill text-white"></i>,
-      name: "Attendance", // Section name
+      icon: getIconForItem("Attendance"),
+      name: "Attendance",
+      gradient: "from-emerald-600 to-teal-500",
       dropdown: [
-        { name: "All Attendance", path: "/attendancelist" }, // This path will lead to the attendance list page
+        { name: "All Attendance", path: "/attendancelist", icon: <FaChevronRight className="text-xs" /> },
       ],
     },
     {
-      icon: <i className="ri-book-open-fill text-white"></i>,
+      icon: getIconForItem("Courses"),
       name: "Courses",
+      gradient: "from-amber-600 to-orange-500",
       dropdown: [
-        { name: "Create Course", path: "/create-course" },
-        { name: "Get All Courses", path: "/courselist" },
+        { name: "Create Course", path: "/create-course", icon: <FaChevronRight className="text-xs" /> },
+        { name: "Get All Courses", path: "/courselist", icon: <FaChevronRight className="text-xs" /> },
       ],
     },
     {
-      icon: <i className="ri-book-open-fill text-white"></i>,
+      icon: getIconForItem("Course Module"),
       name: "Course Module",
+      gradient: "from-rose-600 to-pink-500",
       dropdown: [
-        { name: "Create Course Module", path: "/course-modules/create" },
-        { name: "All Courses Modules", path: "/course-modules" },
+        { name: "Create Course Module", path: "/course-modules/create", icon: <FaChevronRight className="text-xs" /> },
+        { name: "All Courses Modules", path: "/course-modules", icon: <FaChevronRight className="text-xs" /> },
       ],
     },
     {
-      icon: <i className="ri-archive-fill text-white"></i>,
+      icon: getIconForItem("Enrollments"),
       name: "Enrollments",
+      gradient: "from-violet-600 to-purple-500",
       dropdown: [
-        { name: "Get All Enrollments", path: "/allenrollments" },
-        { name: "Create Enrollment", path: "/create-enrollment" },
+        { name: "Get All Enrollments", path: "/allenrollments", icon: <FaChevronRight className="text-xs" /> },
+        { name: "Create Enrollment", path: "/create-enrollment", icon: <FaChevronRight className="text-xs" /> },
       ],
     },
     {
-      icon: <i className="ri-user-star-fill text-white"></i>,
+      icon: getIconForItem("Mentors"),
       name: "Mentors",
+      gradient: "from-sky-600 to-blue-500",
       dropdown: [
-        { name: "Register Mentor", path: "/creatementor" },
-        { name: "All Mentors", path: "/mentorlist" },
-        { name: "Add Enroll to Mentor", path: "/addmentortoenrollered" },
-        { name: "Mentors with batches", path: "/mentorswithbatches" },
+        { name: "Register Mentor", path: "/creatementor", icon: <FaChevronRight className="text-xs" /> },
+        // { name: "All Mentors", path: "/mentorlist", icon: <FaChevronRight className="text-xs" /> },
+        { name: "Add Enroll to Mentor", path: "/addmentortoenrollered", icon: <FaChevronRight className="text-xs" /> },
+        { name: "Mentors with batches", path: "/mentorswithbatches", icon: <FaChevronRight className="text-xs" /> },
       ],
     },
     {
-      icon: <i className="ri-file-text-fill text-white"></i>, // Using a file/invoice icon
+      icon: getIconForItem("Invoices"),
       name: "Invoices",
+      gradient: "from-lime-600 to-green-500",
       dropdown: [
-        { name: "Generate Invoice", path: "/generateinvoice" },
-        { name: "All Invoices", path: "/invoicelist" },
+        { name: "Generate Invoice", path: "/generateinvoice", icon: <FaChevronRight className="text-xs" /> },
+        { name: "All Invoices", path: "/invoicelist", icon: <FaChevronRight className="text-xs" /> },
       ],
     },
     {
-      icon: <i className="ri-phone-fill text-white"></i>, // Using a phone icon
+      icon: getIconForItem("Contacts"),
       name: "Contacts",
+      gradient: "from-indigo-600 to-blue-500",
       dropdown: [
-        { name: "User ContactsList", path: "/usercontactformlist" },
+        { name: "User ContactsList", path: "/usercontactformlist", icon: <FaChevronRight className="text-xs" /> },
       ],
     },
     {
-      icon: <i className="ri-layout-fill text-white"></i>,
+      icon: getIconForItem("Classes"),
       name: "Classes",
+      gradient: "from-red-600 to-orange-500",
       dropdown: [
-        { name: "Create Live Class", path: "/createliveclass" },
-        { name: "Get All LiceClasses", path: "/liveclasses" },
+        { name: "Create Live Class", path: "/createliveclass", icon: <FaChevronRight className="text-xs" /> },
+        { name: "Get All LiveClasses", path: "/liveclasses", icon: <FaChevronRight className="text-xs" /> },
       ],
     },
     {
-      icon: <i className="ri-questionnaire-fill text-white"></i>,
+      icon: getIconForItem("Interviews"),
       name: "Interviews",
+      gradient: "from-yellow-600 to-amber-500",
       dropdown: [
-        { name: "Schedule Interview", path: "/add-interview" },
-        { name: "Get All Interviews", path: "/interviewlist" },
+        { name: "Schedule Interview", path: "/add-interview", icon: <FaChevronRight className="text-xs" /> },
+        { name: "Get All Interviews", path: "/interviewlist", icon: <FaChevronRight className="text-xs" /> },
       ],
     },
-   {
-      icon: <i className="ri-file-text-fill text-white"></i>, // Using a file/invoice icon
-  name: "Certificates",
+    {
+      icon: getIconForItem("Certificates"),
+      name: "Certificates",
+      gradient: "from-cyan-600 to-teal-500",
+      dropdown: [
+        { name: "Issue Certificate", path: "/add-certificate", icon: <FaChevronRight className="text-xs" /> },
+        { name: "View Certificates", path: "/certificate-list", icon: <FaChevronRight className="text-xs" /> },
+      ],
+    },
+    {
+  icon: getIconForItem("Quizzes"),
+  name: "Quizzes",
+  gradient: "from-purple-600 to-pink-500",
   dropdown: [
-    { name: "Issue Certificate", path: "/add-certificate" }, // Path to the page where certificates can be issued
-    { name: "View Certificates", path: "/certificate-list" }, // Path to view the list of issued certificates
+    { 
+      name: "View Quizzes", 
+      path: "/allquizzes", 
+      icon: <FaChevronRight className="text-xs" /> 
+    },
+     { 
+      name: "View Quizzes Submissions", 
+      path: "/allsubmissionquizzes", 
+      icon: <FaChevronRight className="text-xs" /> 
+    },
+  ],
+},
+
+ {
+  icon: getIconForItem("Weekly Tasks"),
+  name: "Weekly Tasks",
+  gradient: "from-purple-600 to-pink-500",
+  dropdown: [
+    { 
+      name: "View Tasks", 
+      path: "/alltasks", 
+      icon: <FaChevronRight className="text-xs" /> 
+    },
+     { 
+      name: "View Quizzes Submissions", 
+      path: "/allsubmissionquizzes", 
+      icon: <FaChevronRight className="text-xs" /> 
+    },
+  ],
+},
+
+{
+  icon: <FaFolderOpen />,
+  name: "Popup",
+  gradient: "from-cyan-600 to-teal-500",
+  dropdown: [
+    { name: "Website Popup", path: "/popup", icon: <FaChevronRight className="text-xs" /> },
   ],
 },
     {
-      icon: <i className="ri-money-dollar-box-fill text-white"></i>,
+      icon: getIconForItem("Payments"),
       name: "Payments",
+      gradient: "from-green-600 to-emerald-500",
       dropdown: [
-        { name: "Get All Payments", path: "/paymentlist" },
+        { name: "Get All Payments", path: "/paymentlist", icon: <FaChevronRight className="text-xs" /> },
       ],
     },
+
     {
-      icon: <i className="ri-logout-box-fill text-white"></i>,
+  icon: <FaFileAlt />,
+  name: "Download All PDFs",
+  gradient: "from-green-600 to-emerald-500",
+  dropdown: [
+    { name: "Get All Payments", path: "/allpdfs", icon: <FaChevronRight className="text-xs" /> },
+  ],
+},
+  {
+  icon: <FaUserCircle />,
+  name: "Profile",
+  gradient: "from-indigo-600 to-purple-500",
+  dropdown: [
+    {
+      name: "View Profile",
+      path: "/adminprofile",
+      icon: <FaChevronRight className="text-xs" />
+    },
+  ],
+},
+    
+    {
+      icon: getIconForItem("Logout"),
       name: "Logout",
+      gradient: "from-gray-600 to-slate-500",
       action: handleLogout,
     },
   ];
 
   return (
     <div
-      className={`transition-all duration-300 ${isMobile ? (isCollapsed ? "w-0" : "w-64") : isCollapsed ? "w-16" : "w-64"
-        } h-screen overflow-y-scroll no-scrollbar flex flex-col bg-blue-800`}
+      className={`transition-all duration-300 ease-out ${
+        isMobile
+          ? isCollapsed
+            ? "w-0 opacity-0"
+            : "w-72 opacity-100"
+          : isCollapsed
+          ? "w-20"
+          : "w-72"
+      } h-screen flex flex-col bg-gradient-to-br from-gray-900 via-slate-900 to-blue-900 backdrop-blur-xl border-r border-blue-500/20 shadow-2xl`}
     >
-      <div className="sticky top-0 p-4 font-bold text-white flex justify-center text-xl">
-        <span>Admin Dashboard</span>
+      {/* Header */}
+      <div className="sticky top-0 z-10 p-6 flex flex-col items-center bg-gradient-to-r from-gray-800/80 to-blue-800/80 backdrop-blur-md border-b border-blue-500/30">
+        <div className="relative mb-4">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/40">
+            <FaUserCircle className="text-2xl text-white" />
+          </div>
+        </div>
+        <span
+          className={`font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 text-xl ${
+            isCollapsed && !isMobile ? "hidden" : "block"
+          }`}
+        >
+          Admin Panel
+        </span>
+        <span
+          className={`text-xs text-blue-300 mt-1 ${
+            isCollapsed && !isMobile ? "hidden" : "block"
+          }`}
+        >
+          Control Dashboard
+        </span>
       </div>
-      <div className="border-b-4 border-gray-800 my-2"></div>
 
-      <nav className={`flex flex-col ${isCollapsed && "items-center"} space-y-4 mt-4`}>
-        {elements.map((item, idx) => (
-          <div key={idx}>
-            {item.dropdown ? (
-              <>
+      {/* Navigation */}
+      <nav className="flex-1 overflow-y-auto py-6 px-4">
+        <div className="space-y-2">
+          {elements.map((item, idx) => {
+            const isDropdownOpen = openDropdown === item.name;
+            const hasDropdown = item.dropdown && item.dropdown.length > 0;
+            
+            return (
+              <div key={idx} className="relative">
+                {/* Main Menu Item */}
                 <div
-                  className="flex items-center py-3 px-4 font-semibold text-sm text-white mx-4 rounded-lg hover:bg-gray-700 hover:text-[#00B074] duration-300 cursor-pointer"
-                  onClick={() => toggleDropdown(item.name)}
+                  className={`flex items-center py-3 px-4 rounded-xl transition-all duration-300 cursor-pointer group ${
+                    isCollapsed && !isMobile ? "justify-center px-2" : ""
+                  } ${
+                    isDropdownOpen
+                      ? `bg-gradient-to-r ${item.gradient} shadow-lg shadow-blue-500/30 text-white`
+                      : hoveredItem === item.name
+                        ? `bg-white/10 backdrop-blur-sm text-white`
+                        : "hover:bg-white/5 text-gray-300 hover:text-white"
+                  }`}
+                  onClick={() => hasDropdown ? toggleDropdown(item.name) : (item.action ? item.action() : navigate(item.path))}
+                  onMouseEnter={() => setHoveredItem(item.name)}
+                  onMouseLeave={() => setHoveredItem(null)}
                 >
-                  <span className="text-xl">{item.icon}</span>
-                  <span className={`ml-4 ${isCollapsed && !isMobile ? "hidden" : "block"}`}>
+                  {/* Icon Container */}
+                  <div
+                    className={`flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-300 ${
+                      isDropdownOpen
+                        ? "bg-white/20 backdrop-blur-sm"
+                        : "bg-white/10 backdrop-blur-sm"
+                    }`}
+                  >
+                    <div
+                      className={`transition-all duration-300 ${
+                        isDropdownOpen ? "text-white scale-110" : "text-white"
+                      }`}
+                    >
+                      {item.icon}
+                    </div>
+                  </div>
+
+                  {/* Text */}
+                  <span
+                    className={`ml-3 font-medium transition-all duration-300 ${
+                      isCollapsed && !isMobile ? "hidden" : "block"
+                    } ${
+                      isDropdownOpen ? "text-white font-semibold" : "text-gray-300 group-hover:text-white"
+                    }`}
+                  >
                     {item.name}
                   </span>
-                  <FaChevronDown
-                    className={`ml-auto text-xs transform ${openDropdown === item.name ? "rotate-180" : "rotate-0"
+
+                  {/* Dropdown Arrow */}
+                  {hasDropdown && !isCollapsed && (
+                    <FaChevronDown
+                      className={`ml-auto text-xs transition-all duration-300 ${
+                        isDropdownOpen ? "rotate-180 text-white" : "text-blue-300"
                       }`}
-                  />
+                    />
+                  )}
                 </div>
-                {openDropdown === item.name && (
-                  <ul className="ml-10 text-sm text-white space-y-1">
+
+                {/* Dropdown Items - NO UNDERLINES */}
+                {isDropdownOpen && hasDropdown && !isCollapsed && (
+                  <div className="ml-12 mt-2 space-y-1.5 animate-fadeIn">
                     {item.dropdown.map((subItem, subIdx) => (
-                      <li key={subIdx}>
+                      <div
+                        key={subIdx}
+                        className={`flex items-center py-2.5 px-4 rounded-lg transition-all duration-300 cursor-pointer ${
+                          hoveredItem === subItem.name
+                            ? `bg-gradient-to-r ${item.gradient} bg-opacity-20 text-white`
+                            : "text-gray-400 hover:text-white hover:bg-white/10"
+                        }`}
+                        onClick={() => navigate(subItem.path)}
+                        onMouseEnter={() => setHoveredItem(subItem.name)}
+                        onMouseLeave={() => setHoveredItem(null)}
+                      >
+                        {/* Indicator Dot */}
+                        <div
+                          className={`w-2 h-2 rounded-full mr-3 transition-all duration-300 ${
+                            hoveredItem === subItem.name
+                              ? "bg-white"
+                              : "bg-blue-400/50 group-hover:bg-blue-300"
+                          }`}
+                        />
+                        
+                        {/* Sub Item Content - NO UNDERLINE */}
                         <Link
                           to={subItem.path}
-                          className="flex items-center space-x-2 py-2 font-medium cursor-pointer hover:text-[#00B074] hover:underline"
+                          className={`flex-1 flex items-center font-medium transition-all duration-300 ${
+                            "text-gray-400 hover:text-white"
+                          }`}
+                          style={{ textDecoration: "none" }}
                           onClick={() => setOpenDropdown(null)}
                         >
-                          <span className="text-[#00B074]">•</span>
                           <span>{subItem.name}</span>
+                          <span className="ml-auto opacity-60">
+                            {subItem.icon}
+                          </span>
                         </Link>
-                      </li>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 )}
-              </>
-            ) : (
-              <div
-                className="flex items-center py-3 px-4 font-semibold text-sm text-white mx-4 rounded-lg hover:bg-gray-700 hover:text-[#00B074] duration-300 cursor-pointer"
-                onClick={item.action || (() => navigate(item.path))}
-              >
-                <span className="text-xl">{item.icon}</span>
-                <span className={`ml-4 ${isCollapsed && !isMobile ? "hidden" : "block"}`}>
-                  {item.name}
-                </span>
               </div>
-            )}
-          </div>
-        ))}
+            );
+          })}
+        </div>
       </nav>
+
+      {/* Footer */}
+      {!isCollapsed && (
+        <div className="p-4 border-t border-blue-500/20">
+          <div className="text-center">
+            <small style={{ opacity: 0.6, fontSize: '0.75rem', color: '#93c5fd' }}>
+              © 2025 Techsterker Admin Portal
+            </small>
+          </div>
+        </div>
+      )}
+
+      <style jsx>{`
+        .animate-fadeIn {
+          animation: fadeIn 0.2s ease-out;
+        }
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(-5px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 };

@@ -115,6 +115,14 @@ import AddMentorToEnrollment from "./Pages/AddMentorToEnrollment.js";
 import MentorsWithBatches from "./Pages/MentorsWithBatches.js";
 import FormsManagement from "./Pages/FormManagement.js";
 import AttendanceList from "./Pages/AttendanceList.js";
+import GetAllQuizzes from "./Pages/GetAllQuizzes.js";
+import GetAllSubmissions from "./Pages/GetAllSubmissions.js";
+import CreateCertificate from "./Pages/CreateCertificate.js";
+import CertificateList from "./Pages/CertificateList.js";
+import AdminProfile from "./Pages/AdminProfile.js";
+import DownloadCoursePdf from "./Pages/DownloadCoursePdf.js";
+import PopupManagement from "./Pages/PopupManagement.js";
+import GetAllTasks from "./Pages/GetAllTasks.js";
 
 
 
@@ -244,6 +252,14 @@ function App() {
               <Route path="/mentorswithbatches" element={<MentorsWithBatches />} />
               <Route path="/usercontactformlist" element={<FormsManagement />} />
               <Route path="/attendancelist" element={<AttendanceList />} />
+              <Route path="/allquizzes" element={<GetAllQuizzes />} />
+              <Route path="/allsubmissionquizzes" element={<GetAllSubmissions />} />
+              <Route path="/add-certificate" element={<CreateCertificate />} />
+              <Route path="/certificate-list" element={<CertificateList />} />
+              <Route path="/adminprofile" element={<AdminProfile />} />
+              <Route path="/allpdfs" element={<DownloadCoursePdf />} />
+              <Route path="/popup" element={<PopupManagement />} />
+              <Route path="/alltasks" element={<GetAllTasks />} />
 
 
 
